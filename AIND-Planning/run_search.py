@@ -42,7 +42,7 @@ SEARCHES = [["breadth_first_search", breadth_first_search, ""],
 class PrintableProblem(InstrumentedProblem):
     """ InstrumentedProblem keeps track of stats during search, and this
     class modifies the print output of those statistics for air cargo
-    problems.
+    problems.z
     """
 
     def __repr__(self):
