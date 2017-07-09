@@ -507,19 +507,23 @@ class PlanningGraph():
                 if not s1_precond.is_mutex(s2_precond): return False
         return True
 
-    def goal_finder(self, goal, level):
-        for state in self.s_levels[level]:
-            if goal == state.symbol: return level
+    def get_literal(self, state):
+        return expr(state.symbol) if state.is_pos else expr('~{}'.format(state.symbol))
+
+    def goal_finder(self, goal):
+        for level in range(len(self.s_levels)):
+            for state in self.s_levels[level]:
+                if goal == self.get_literal(state): return level
+        return 0
 
     def h_levelsum(self) -> int:
         """The sum of the level costs of the individual goals (admissible if goals independent)
 
         :return: int
         """
-        level_sum = 0
         # DONE implement
         # for each goal in the problem, determine the level cost, then add them together
+        level_sum = 0
         for goal in self.problem.goal:
-            for level in range(len(self.s_levels)):
-                level_sum += self.goal_finder(goal, level)
+            level_sum += self.goal_finder(goal)
         return level_sum
