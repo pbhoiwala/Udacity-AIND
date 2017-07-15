@@ -402,6 +402,9 @@ class PlanningGraph():
         :return: bool
         """
         # DONE test for Inconsistent Effects between nodes
+        # checks to see if any pos effects from node a1 aren't there in neg effects from node a2
+        # then check if any pos effects from node a2 aren't there in neg effects from node a1
+        # if any of them are there, simply return True i.e inconsistency found
         a1 = [effect for effect in node_a1.action.effect_add if effect in node_a2.action.effect_rem]
         if any(a1): return True
         a2 = [effect for effect in node_a2.action.effect_add if effect in node_a1.action.effect_rem]
@@ -423,11 +426,15 @@ class PlanningGraph():
         :return: bool
         """
         # DONE test for Interference between nodes
+        # check to see if pos effects from a1 don't interfere with neg effects from a2
+        # check to see if pos effects from a2 don't interfere with neg effects from a1
         a1_pos = [effect for effect in node_a1.action.effect_add if effect in node_a2.action.precond_neg]
         if any(a1_pos): return True
         a2_pos = [effect for effect in node_a2.action.effect_add if effect in node_a1.action.precond_neg]
         if any(a2_pos): return True
 
+        # check to see if neg effects from a1 don't interfere with pos effects from a2
+        # check to see if neg effects from a2 don't interfere with pos effects from a1
         a1_neg = [effect for effect in node_a1.action.effect_rem if effect in node_a2.action.precond_pos]
         if any(a1_neg): return True
         a2_neg = [effect for effect in node_a2.action.effect_rem if effect in node_a1.action.precond_pos]
@@ -445,6 +452,7 @@ class PlanningGraph():
         :return: bool
         """
         # DONE test for Competing Needs between nodes
+        # check to see if a1's precond is mutex of a2's precond and return True if so
         for a1_precond in node_a1.parents:
             for a2_precond in node_a2.parents:
                 if a1_precond.is_mutex(a2_precond): return True
@@ -508,9 +516,21 @@ class PlanningGraph():
         return True
 
     def get_literal(self, state):
+        """
+        Returns the literal for the given state
+        :param state: state is each element in self.s_levels[level]
+        :return: symbol is state is positive else formatted symbol
+        """
         return expr(state.symbol) if state.is_pos else expr('~{}'.format(state.symbol))
 
     def goal_finder(self, goal):
+        """
+        Iterate over all the levels in s_levels, then iterate over each state
+        in self.s_levels for that level. If the goal at that state matches the
+        goal we are looking for, return that level otherwise 0 if not found
+        :param goal:
+        :return:
+        """
         for level in range(len(self.s_levels)):
             for state in self.s_levels[level]:
                 if goal == self.get_literal(state): return level

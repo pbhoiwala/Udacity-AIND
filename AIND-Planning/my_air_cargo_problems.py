@@ -127,7 +127,10 @@ class AirCargoProblem(Problem):
             e.g. 'FTTTFF'
         :return: list of Action objects
         """
-        # DONE implement
+        # DONE implement - referenced example_have_cake.py
+        # Iterate over all possible actions and select the ones that
+        # are executable. Which means that those actions would have to
+        # be in precond_pos list.
         possible_actions = []
         kb = PropKB()
         kb.tell(decode_state(state, self.state_map).pos_sentence())
@@ -152,7 +155,7 @@ class AirCargoProblem(Problem):
         :param action: Action applied
         :return: resulting state after action
         """
-        # DONE implement
+        # DONE implement - referenced example_have_cake.py
         new_state = FluentState([], [])
         old_state = decode_state(state, self.state_map)
         for fluent in old_state.pos:
